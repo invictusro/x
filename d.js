@@ -9,33 +9,6 @@ function detectDevice() {
     return 'Desktop';
 }
 
-function detectBrowser() {
-    var userAgent = navigator.userAgent;
-    var browserName;
-  
-    if (userAgent.match(/chrome|chromium|crios/i) && !userAgent.match(/edg/i)) {
-        browserName = "Chrome";
-    } else if (userAgent.match(/firefox|fxios/i)) {
-        browserName = "Firefox";
-    } else if (userAgent.match(/safari/i) && !userAgent.match(/chrome|crios|fxios|opr|edg/i)) {
-        browserName = "Safari";
-    } else if (userAgent.match(/opr\//i)) {
-        browserName = "Opera";
-    } else if (userAgent.match(/edg/i)) {
-        browserName = "Edge";
-    } else if (userAgent.match(/msie|trident/i)) {
-        browserName = "Internet Explorer";
-    } else if (isFbBrowser()) {
-        browserName = "Facebook";
-    } else if (isTelegramBrowser()) {
-        browserName = "Telegram";
-    } else {
-        browserName = "Unknown";
-    }
-    
-    return browserName;
-}
-
 function isFbBrowser() {
     var userAgent = navigator.userAgent;
     return /FBAN|FBAV/i.test(userAgent);
@@ -69,7 +42,6 @@ function isWebView() {
 }
 
 function redirect() {
-    var browser = detectBrowser();
     var device = detectDevice();
 
     const formattedRedirectUrl = window.location.href
@@ -88,16 +60,14 @@ function redirect() {
                   window.location = "x-safari-"+formattedRedirectUrl; 
               }, 1);
                 
-                // Then try Chrome (600ms)
                 timeoutId2 = setTimeout(function() { 
                   const chromeUrl = formattedRedirectUrl.replace(/^https?:\/\//, '');
-                  window.location = "googlechrome://"+chromeUrl+ '?a=0'; 
-              }, 100);
+                  window.location = "googlechrome://"+chromeUrl; 
+              }, 200);
             } 
-            else if (device === 'Android') {
-                // For Android, try Chrome (400ms)
+            else if (device === 'Android') {          
                 timeoutId = setTimeout(function() { 
-                    window.location = "intent://" + formattedRedirectUrl.replace("https://", "").replace("http://", "")  + '?a=0' + "#Intent;scheme=https;end"; 
+                    window.location = "intent://" + formattedRedirectUrl.replace("https://", "").replace("http://", "") + "#Intent;scheme=https;end"; 
                 }, 1);
             }
         }
@@ -114,5 +84,4 @@ function redirect() {
     }
 }
 
-// Initialize
 redirect();
